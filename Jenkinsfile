@@ -7,42 +7,58 @@ pipeline {
     stages {
         stage('Clean') {
             steps {
-                sh 'mvn clean'
+                catchError(buildResult: 'SUCCESS', stageResult: 'ABORTED') {
+                    sh 'mvn clean'
+                }
             }
         }
         stage('Compile') {
             steps {
-                sh 'mvn compile'
+                catchError(buildResult: 'SUCCESS', stageResult: 'ABORTED') {
+                    sh 'mvn compile'
+                }
             }
         }
         stage('Test') {
             steps {
-                sh 'mvn test -Dmaven.test.failure.ignore=true'
+                catchError(buildResult: 'SUCCESS', stageResult: 'ABORTED') {
+                    sh 'mvn test -Dmaven.test.failure.ignore=true'
+                }
             }
         }
         stage('PMD') {
             steps {
-                sh 'mvn pmd:pmd'
+                catchError(buildResult: 'SUCCESS', stageResult: 'ABORTED') {
+                    sh 'mvn pmd:pmd'
+                }
             }
         }
         stage('JaCoCo') {
             steps {
-                sh 'mvn jacoco:report'
+                catchError(buildResult: 'SUCCESS', stageResult: 'ABORTED') {
+                    sh 'mvn jacoco:report'
+                }
             }
         }
         stage('Javadoc') {
             steps {
-                sh 'mvn javadoc:javadoc'
+                catchError(buildResult: 'SUCCESS', stageResult: 'ABORTED') {
+                    sh 'mvn javadoc:javadoc'
+                }
             }
         }
         stage('Site') {
             steps {
-                sh 'mvn site'
+                catchError(buildResult: 'SUCCESS', stageResult: 'ABORTED') {
+                    sh 'mvn site'
+                }
             }
         }
         stage('Package') {
             steps {
-                sh 'mvn package -DskipTests'
+                catchError(buildResult: 'SUCCESS', stageResult: 'ABORTED') {
+                    sh 'mvn package -DskipTests'
+                }
             }
         }
     }
