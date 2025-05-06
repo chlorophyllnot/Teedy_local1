@@ -38,20 +38,29 @@ pipeline {
         }
 
         // Run Docker containers
-        stage('Run containers') {
-            steps {
-                script {
-// 使用完整路径来停止并删除已经存在的容器（如果有）
-                    sh "${DOCKER_PATH} stop teedy-container-8081 || true"
-                    sh "${DOCKER_PATH} rm teedy-container-8081 || true"
-                    // 使用完整路径运行 Docker 容器
-                    sh "${DOCKER_PATH} run --name teedy-container-8081 -d -p 8081:8080 ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+stage('Run containers') {
+    steps {
+        script {
+            // 定义要运行的容器数量和端口
+            def containers = 3
+            def basePort = 8081
 
-                    // 可选：列出所有 teedy-container 容器 使用完整路径
-                    sh "${DOCKER_PATH} ps --filter 'name=teedy-container'"
-                   
-                }
+            // 循环创建并运行容器
+            for (int i = 0; i < containers; i++) {
+                def port = basePort + i
+
+                // 使用完整路径来停止并删除已经存在的容器（如果有）
+                sh "${DOCKER_PATH} stop teedy-container-${port} || true"
+                sh "${DOCKER_PATH} rm teedy-container-${port} || true"
+
+                // 使用完整路径运行 Docker 容器
+                sh "${DOCKER_PATH} run --name teedy-container-${port} -d -p ${port}:8080 ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
             }
+
+            // 可选：列出所有 teedy-container 容器 使用完整路径
+            sh "${DOCKER_PATH} ps --filter 'name=teedy-container'"
         }
+    }
+}
     }
 }
