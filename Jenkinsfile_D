@@ -40,7 +40,7 @@ pipeline {
             steps {
                 script {
                     // 登录 Docker Hub
-                    docker.withRegistry('https://registry.hub.docker.com', 'DOCKER_HUB_CREDENTIALS') {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
                         // 推送 Docker 镜像
                         docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").push()
 
