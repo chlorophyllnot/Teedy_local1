@@ -41,10 +41,9 @@ pipeline {
         stage('Upload image') {
             steps {
                 script {
-                         // 使用指定的 Docker 配置路径登录 Docker Hub
+                        // Login to Docker Hub without specifying DOCKER_CONFIG_DIR
                     sh """
-                    mkdir -p ${DOCKER_CONFIG_DIR}  # 创建自定义 Docker 配置目录
-                    echo \${DOCKER_HUB_CREDENTIALS_PSW} | ${DOCKER_PATH} login -u \${DOCKER_HUB_CREDENTIALS_USR} --password-stdin --config ${DOCKER_CONFIG_DIR} https://registry.hub.docker.com
+                    echo \${DOCKER_HUB_CREDENTIALS_PSW} | ${DOCKER_PATH} login -u \${DOCKER_HUB_CREDENTIALS_USR} --password-stdin https://registry.hub.docker.com
                     """
 
 
