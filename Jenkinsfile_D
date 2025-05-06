@@ -40,9 +40,10 @@ pipeline {
         stage('Upload image') {
             steps {
                 script {
-                        sh """
-echo \${DOCKER_HUB_CREDENTIALS_PSW} | ${DOCKER_PATH} login -u \${DOCKER_HUB_CREDENTIALS_USR} --password-stdin --disable-credentials-store https://registry.hub.docker.com
+                       sh """
+echo \${DOCKER_HUB_CREDENTIALS_PSW} | ${DOCKER_PATH} login -u \${DOCKER_HUB_CREDENTIALS_USR} --password-stdin https://registry.hub.docker.com
 """
+
 
                   
                         // 推送 Docker 镜像 使用完整路径
