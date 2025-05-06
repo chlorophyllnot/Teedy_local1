@@ -6,6 +6,7 @@ pipeline {
     }
 
     environment {
+        DOCKER_CREDENTIALS = '/usr/local/bin/docker-credential-desktop'
         DOCKER_PATH = '/usr/local/bin/docker'  // 指定 Docker 的完整路径
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub_credentials')  // 使用 Docker Hub 凭据
         DOCKER_IMAGE = 'wangzhiya/teddy'  // 替换为你的 Docker Hub 用户名和镜像名称
@@ -39,10 +40,11 @@ pipeline {
         stage('Upload image') {
             steps {
                 script {
-                   // 使用指定的 Docker 路径来登录 Docker Hub
-                    sh """
-                    echo \${DOCKER_HUB_CREDENTIALS_PSW} | ${DOCKER_PATH} login -u \${DOCKER_HUB_CREDENTIALS_USR} --password-stdin https://registry.hub.docker.com
-                    """
+                        sh """
+echo \${DOCKER_HUB_CREDENTIALS_PSW} | ${DOCKER_PATH} login -u \${DOCKER_HUB_CREDENTIALS_USR} --password-stdin --disable-credentials-store https://registry.hub.docker.com
+"""
+
+                  
                         // 推送 Docker 镜像 使用完整路径
                         sh "${DOCKER_PATH} push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
 
