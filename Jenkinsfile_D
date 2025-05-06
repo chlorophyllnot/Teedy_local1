@@ -39,15 +39,16 @@ pipeline {
         stage('Upload image') {
             steps {
                 script {
-                    // 登录 Docker Hub
-                    sh "${DOCKER_PATH} login -u ${DOCKER_HUB_CREDENTIALS_USR} -p ${DOCKER_HUB_CREDENTIALS_PSW} https://registry.hub.docker.com"
+                    // 获取 Docker Hub 凭据并登录
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub_credentials', passwordVariable: 'DOCKER_HUB_PSW', usernameVariable: 'DOCKER_HUB_USR')]) {
+                        // 登录 Docker Hub
+                        sh "${DOCKER_PATH} login -u ${DOCKER_HUB_USR} -p ${DOCKER_HUB_PSW} https://registry.hub.docker.com"
 
-                    // 推送 Docker 镜像
-                    sh "${DOCKER_PATH} push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+                        // 推送 Docker 镜像
+                        sh "${DOCKER_PATH} push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
 
-                    // 可选：推送 latest 标签
-                    sh "${DOCKER_PATH} push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} latest"
-              
+                        // 可选：推送 latest 标签
+                        sh "${DOCKER_PATH} push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} latest"
                     }
                 }
             }
