@@ -1,6 +1,10 @@
 pipeline {
     agent any
-    
+
+    tools {
+        maven "Maven-3.9.9" // 确保这里使用的是你在 Jenkins 中配置的 Maven 名称
+    }
+
     environment {
         DOCKER_PATH = '/usr/local/bin/docker'  // 指定 Docker 的完整路径
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub_credentials')  // 使用 Docker Hub 凭据
