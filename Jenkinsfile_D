@@ -29,8 +29,8 @@ pipeline {
         stage('Building image') {
             steps {
                 script {
-                    // 假设 Dockerfile 位于根目录
-                    docker.build("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}")
+                    // 使用完整路径来执行 Docker 命令
+                    sh "${DOCKER_PATH} build -t ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ."
                 }
             }
         }
