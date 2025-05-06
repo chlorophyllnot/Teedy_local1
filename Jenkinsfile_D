@@ -37,21 +37,6 @@ pipeline {
             }
         }
 
-        // Upload Docker image to Docker Hub
-        stage('Upload image') {
-            steps {
-                script {
-                       
-                        // 推送 Docker 镜像 使用完整路径
-                        sh "${DOCKER_PATH} push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
-
-                        // 可选：推送 latest 标签 使用完整路径
-                        sh "${DOCKER_PATH} push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} latest"
-                    
-                }
-            }
-        }
-
         // Run Docker containers
         stage('Run containers') {
             steps {
