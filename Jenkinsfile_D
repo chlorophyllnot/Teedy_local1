@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+    
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub_credentials')  // 使用 Docker Hub 凭据
+        DOCKER_IMAGE = 'wangzhiya/teddy'  // 替换为你的 Docker Hub 用户名和镜像名称
+        DOCKER_TAG = "${env.BUILD_NUMBER}"  // 使用构建号作为 Docker 镜像标签
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm  // 检出代码
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}")  // 构建 Docker 镜像
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'DOCKER_HUB_CREDENTIALS') {
+                        docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").push()  // 推送 Docker 镜像到 Docker Hub
+                        docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").push('latest')  // 推送最新标签
+                    }
+                }
+            }
+        }
+
+        stage('Run Containers') {
+            steps {
+                script {
+                    // 停止并移除已经存在的容器
+                    sh 'docker stop teedy-container-8082 || true'
+                    sh 'docker rm teedy-container-8082 || true'
+                    sh 'docker stop teedy-container-8083 || true'
+                    sh 'docker rm teedy-container-8083 || true'
+                    sh 'docker stop teedy-container-8084 || true'
+                    sh 'docker rm teedy-container-8084 || true'
+
+                    // 启动三个容器，分别映射到端口 8082, 8083, 8084
+                    docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").run('--name teedy-container-8082 -d -p 8082:8080')
+                    docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").run('--name teedy-container-8083 -d -p 8083:8080')
+                    docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").run('--name teedy-container-8084 -d -p 8084:8080')
+                }
+            }
+        }
+    }
+}
