@@ -2,6 +2,7 @@ pipeline {
     agent any
     
     environment {
+        DOCKER_PATH = '/usr/local/bin/docker'  // 指定 Docker 的完整路径
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub_credentials')  // 使用 Docker Hub 凭据
         DOCKER_IMAGE = 'wangzhiya/teddy'  // 替换为你的 Docker Hub 用户名和镜像名称
         DOCKER_TAG = "${env.BUILD_NUMBER}"  // 使用构建号作为 Docker 镜像标签
