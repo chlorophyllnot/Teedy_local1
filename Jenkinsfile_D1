@@ -5,9 +5,9 @@ pipeline {
     }
 
     environment {
-        DEPLOYMENT_NAME = "your-deployment"
-        CONTAINER_NAME = "your-container"
-        IMAGE_NAME = "your-dockerhub-id/your-image:version"
+        DEPLOYMENT_NAME = "hello-node"
+        CONTAINER_NAME = "minikube"
+        IMAGE_NAME = "k8s-minikul"
     }
     stages {
         stage('Start Minikube') {
