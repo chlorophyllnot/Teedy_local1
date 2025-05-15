@@ -1,1 +1,46 @@
+pipeline {
+    agent any
+    tools {
+        maven "Maven-3.9.9" // 确保这里使用的是你在 Jenkins 中配置的 Maven 名称
+    }
 
+    environment {
+        DEPLOYMENT_NAME = "your-deployment"
+        CONTAINER_NAME = "your-container"
+        IMAGE_NAME = "your-dockerhub-id/your-image:version"
+    }
+    stages {
+        stage('Start Minikube') {
+            steps {
+                script {
+                    sh '''
+                        if ! minikube status | grep -q "Running"; then
+                            echo "Starting Minikube..."
+                            minikube start
+                        else
+                            echo "Minikube already running."
+                        fi
+                    '''
+                }
+            }
+        }
+        stage('Set Image') {
+            steps {
+                script {
+                    sh '''
+                        echo "Setting image for deployment..."
+                        kubectl set image deployment/${DEPLOYMENT_NAME} ${CONTAINER_NAME}=${IMAGE_NAME}
+                    '''
+                }
+            }
+        }
+        stage('Verify') {
+            steps {
+                script {
+                    sh 'kubectl rollout status deployment/${DEPLOYMENT_NAME}'
+                    sh 'kubectl get pods'
+                }
+            }
+        }
+    }
+}
